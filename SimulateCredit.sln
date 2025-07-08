@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulateCredit.API", "src\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulateCredit.Application", "src\SimulateCredit.Application\SimulateCredit.Application.csproj", "{C822C5E3-53BD-4DE2-B375-C3388DF22B79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulateCredit.Core", "src\SimulateCredit.Core\SimulateCredit.Core.csproj", "{E4B087AB-66C5-4BC7-BF26-6F4AA94A5A73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulateCredit.Domain", "src\SimulateCredit.Domain\SimulateCredit.Domain.csproj", "{E4B087AB-66C5-4BC7-BF26-6F4AA94A5A73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimulateCredit.Infrastructure", "src\SimulateCredit.Infrastructure\SimulateCredit.Infrastructure.csproj", "{7D17596A-48FF-4883-BB19-8572F8990733}"
 EndProject
@@ -97,5 +97,8 @@ Global
 		{E4B087AB-66C5-4BC7-BF26-6F4AA94A5A73} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{7D17596A-48FF-4883-BB19-8572F8990733} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{C94421EF-38C5-481E-B378-9C3AEFC2AC24} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6EDC7C8F-504D-4BDB-A007-B6291FEF0613}
 	EndGlobalSection
 EndGlobal

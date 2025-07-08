@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SimulateCredit.Application\SimulateCredit.Application.csproj" />
-    <ProjectReference Include="..\..\src\SimulateCredit.Core\SimulateCredit.Core.csproj" />
+    <ProjectReference Include="..\..\src\SimulateCredit.Domain\SimulateCredit.Domain.csproj" />
   </ItemGroup>
 
 </Project>
