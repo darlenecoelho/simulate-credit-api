@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\SimulateCredit.Core\SimulateCredit.Core.csproj" />
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimulateCredit.Domain\SimulateCredit.Domain.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
