@@ -2,6 +2,6 @@
 
 public enum InterestRateType
 {
-    Fixed = 1,
-    Variable = 2
+    Age,
+    AgeWithVariableRate
 }
