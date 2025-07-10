@@ -22,6 +22,7 @@ public class TestConfig<TService> where TService : class
     public Mock<ICreditSimulationPublisher> CreditSimulationPublisherMock { get; }
     public Mock<INotificationService> NotificationServiceMock { get; }
     public Mock<ISimulationFactory> SimulationFactoryMock { get; }
+    protected Mock<IAuditLogger> AuditLoggerMock { get; } = new();
 
     public TestConfig()
     {

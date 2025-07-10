@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using SimulateCredit.Application.DTOs;
 using SimulateCredit.Application.Ports.Outgoing;
@@ -12,12 +11,12 @@ public sealed class RabbitMqPublisherAdapter : ICreditSimulationPublisher, IDisp
 {
     private readonly IConnection _connection;
     private readonly RabbitMqSettings _settings;
-    private readonly ILogger<RabbitMqPublisherAdapter> _logger;
+    private readonly IAuditLogger _auditLogger;
 
-    public RabbitMqPublisherAdapter(IOptions<RabbitMqSettings> options, ILogger<RabbitMqPublisherAdapter> logger)
+    public RabbitMqPublisherAdapter(IOptions<RabbitMqSettings> options, IAuditLogger auditLogger)
     {
         _settings = options.Value;
-        _logger = logger;
+        _auditLogger = auditLogger;
         var factory = new ConnectionFactory
         {
             HostName = _settings.HostName,
@@ -51,11 +50,11 @@ public sealed class RabbitMqPublisherAdapter : ICreditSimulationPublisher, IDisp
                     routingKey: _settings.QueueName,
                     basicProperties: props,
                     body: body);
-                _logger.LogInformation("Simulation published to RabbitMQ queue {Queue}", _settings.QueueName);
+                _auditLogger.LogInformation("Simulation published to RabbitMQ queue {Queue}", _settings.QueueName);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error publishing simulation to RabbitMQ");
+                _auditLogger.LogError(ex, "Error publishing simulation to RabbitMQ");
                 throw;
             }
         });

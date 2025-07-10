@@ -2,6 +2,7 @@
 using SimulateCredit.Application.DTOs;
 using SimulateCredit.Application.Exceptions;
 using SimulateCredit.Application.Ports.Incoming;
+using SimulateCredit.Application.Ports.Outgoing;
 
 namespace SimulateCredit.API.Controllers;
 
@@ -10,12 +11,12 @@ namespace SimulateCredit.API.Controllers;
 public class SimulateCreditController : ControllerBase
 {
     private readonly ISimulateCreditUseCase _useCase;
-    private readonly ILogger<SimulateCreditController> _logger;
+    private readonly IAuditLogger _auditLogger;
 
-    public SimulateCreditController(ISimulateCreditUseCase useCase, ILogger<SimulateCreditController> logger)
+    public SimulateCreditController(ISimulateCreditUseCase useCase, IAuditLogger auditLogger)
     {
         _useCase = useCase;
-        _logger = logger;
+        _auditLogger = auditLogger;
     }
 
     /// <summary>
@@ -24,7 +25,7 @@ public class SimulateCreditController : ControllerBase
     [HttpPost("simulate")]
     public async Task<IActionResult> SimulateAsync([FromBody] SimulateCreditRequest request)
     {
-        _logger.LogInformation("Received single simulation request");
+        _auditLogger.LogInformation("Received single simulation request");
         try
         {
             var result = await _useCase.ExecuteAsync(request);
@@ -32,7 +33,7 @@ public class SimulateCreditController : ControllerBase
         }
         catch (SimulationException ex)
         {
-            _logger.LogError(ex, "Simulation failed");
+            _auditLogger.LogError(ex, "Simulation failed");
             return StatusCode(500, ex.Message);
         }
     }
@@ -43,7 +44,7 @@ public class SimulateCreditController : ControllerBase
     [HttpPost("simulate/bulk")]
     public async Task<IActionResult> SimulateBulkAsync([FromBody] List<SimulateCreditRequest> requests)
     {
-        _logger.LogInformation("Received bulk simulation request with {Count} items", requests.Count);
+        _auditLogger.LogInformation("Received bulk simulation request with {Count} items", requests.Count);
         try
         {
             var tasks = requests.Select(_useCase.ExecuteAsync);
@@ -52,7 +53,7 @@ public class SimulateCreditController : ControllerBase
         }
         catch (SimulationException ex)
         {
-            _logger.LogError(ex, "Bulk simulation failed");
+            _auditLogger.LogError(ex, "Bulk simulation failed");
             return StatusCode(500, ex.Message);
         }
     }

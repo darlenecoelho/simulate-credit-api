@@ -11,7 +11,7 @@ using SimulateCredit.Domain.Enums;
 using SimulateCredit.Domain.ValueObjects;
 using SimulateCredit.Tests.Config;
 
-namespace SimulateCredit.Tests.Integration.UseCases;
+namespace SimulateCredit.Tests.Aplication.UseCases;
 
 public class SimulateCreditUseCaseIntegrationTests : TestConfig<SimulateCreditUseCase>
 {
@@ -44,7 +44,7 @@ public class SimulateCreditUseCaseIntegrationTests : TestConfig<SimulateCreditUs
             MediatorMock.Object,
             calculator,
             factory,
-            LoggerMock.Object);
+            AuditLoggerMock.Object);
     }
 
     [Theory]
@@ -72,7 +72,7 @@ public class SimulateCreditUseCaseIntegrationTests : TestConfig<SimulateCreditUs
         // Assert: taxa mensal = annualRate/12
         var r = (decimal)(annualRate / 12.0);
         var factor = (decimal)Math.Pow(1 + (double)r, months);
-        var expectedMonthly = (principal * r * factor) / (factor - 1);
+        var expectedMonthly = principal * r * factor / (factor - 1);
 
         response.MonthlyPayment.Should().Be(Math.Round(expectedMonthly, 2));
 
@@ -107,7 +107,7 @@ public class SimulateCreditUseCaseIntegrationTests : TestConfig<SimulateCreditUs
         // Assert: taxa mensal = 0.045/12
         var r = 0.045m / 12m;
         var factor = (decimal)Math.Pow(1 + (double)r, months);
-        var expectedMonthly = (principal * r * factor) / (factor - 1);
+        var expectedMonthly = principal * r * factor / (factor - 1);
 
         response.MonthlyPayment.Should().BeApproximately(Math.Round(expectedMonthly, 2), 0.01m);
     }

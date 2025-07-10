@@ -1,14 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-using SimulateCredit.Application.Ports.Outgoing;
+﻿using SimulateCredit.Application.Ports.Outgoing;
 
 namespace SimulateCredit.Infrastructure.Adapters.EmailNotification;
 
 public class NotificationService : INotificationService
 {
-    private readonly ILogger<NotificationService> _logger;
+    private readonly IAuditLogger _auditLogger;
 
-    public NotificationService(ILogger<NotificationService> logger)
-        => _logger = logger;
+    public NotificationService(IAuditLogger auditLogger)
+        => _auditLogger = auditLogger;
 
     public Task NotifySimulationAsync(
         string email,
@@ -18,7 +17,7 @@ public class NotificationService : INotificationService
     {
         try
         {
-            _logger.LogInformation(
+            _auditLogger.LogInformation(
                 "Simulating send email to {Email}: Total={Total:C}, Monthly={Monthly:C}, Interest={Interest:C}",
                 email, totalAmount, monthlyPayment, totalInterest);
 
@@ -26,7 +25,7 @@ public class NotificationService : INotificationService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error sending notification to {Email}", email);
+            _auditLogger.LogError(ex, "Error sending notification to {Email}", email);
             throw;
         }
     }

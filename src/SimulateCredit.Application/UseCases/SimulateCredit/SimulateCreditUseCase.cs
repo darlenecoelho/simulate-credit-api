@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Logging;
 using SimulateCredit.Application.DTOs;
 using SimulateCredit.Application.Exceptions;
 using SimulateCredit.Application.Interfaces;
@@ -15,46 +14,76 @@ public sealed class SimulateCreditUseCase : ISimulateCreditUseCase
     private readonly IMediator _mediator;
     private readonly ILoanCalculationService _calculator;
     private readonly ISimulationFactory _factory;
-    private readonly ILogger<SimulateCreditUseCase> _logger;
+    private readonly IAuditLogger _auditLogger;
 
     public SimulateCreditUseCase(
         ISimulationRepository simulationRepository,
         IMediator mediator,
         ILoanCalculationService calculator,
         ISimulationFactory factory,
-        ILogger<SimulateCreditUseCase> logger)
+        IAuditLogger auditLogger)
     {
         _simulationRepository = simulationRepository;
         _mediator = mediator;
         _calculator = calculator;
         _factory = factory;
-        _logger = logger;
+        _auditLogger = auditLogger;
     }
 
     public async Task<SimulateCreditResponse> ExecuteAsync(SimulateCreditRequest request)
     {
-        _logger.LogInformation("Starting simulation for {Email}", request.Customer.Email);
+        var email = request.Customer.Email;
+
+        _auditLogger.LogInformation(
+            "Starting simulation for {Email} | Loan={Amount} {Currency}, Months={Months}, RateType={RateType}",
+            email,
+            request.LoanAmount.Amount,
+            request.LoanAmount.Currency,
+            request.Months,
+            request.RateType);
+
         try
         {
             #region Calculate
-            _logger.LogInformation("Calculating loan values");
+            _auditLogger.LogInformation(
+                "Simulation for {Email}: Calculating loan values",
+                email);
+
             var resultDto = await _calculator.CalculateAsync(request);
+
+            _auditLogger.LogInformation(
+                "Simulation for {Email}: Calculation completed | Total={Total}, Monthly={Monthly}, Interest={Interest}",
+                email,
+                resultDto.TotalAmount,
+                resultDto.MonthlyPayment,
+                resultDto.TotalInterest);
             #endregion
 
             #region Create domain entity
             var simulation = _factory.Create(request, resultDto);
-            _logger.LogInformation("Simulation entity created");
+            _auditLogger.LogInformation(
+                "Simulation for {Email}: Domain entity created at {CreatedAt}",
+                email,
+                simulation.CreatedAt);
             #endregion
 
-            #region persistence
+            #region Persistence
             await _simulationRepository.SaveAsync(simulation);
-            _logger.LogInformation("Simulation persisted");
+            _auditLogger.LogInformation(
+                "Simulation for {Email}: Persisted successfully",
+                email);
             #endregion
 
-            #region Publish events
+            #region Publish Events
             await _mediator.Publish(new SimulationCompletedNotification(resultDto));
-            _logger.LogInformation("Simulation events published");
+            _auditLogger.LogInformation(
+                "Simulation for {Email}: Notification published",
+                email);
             #endregion
+
+            _auditLogger.LogInformation(
+                "Simulation for {Email}: Completed successfully",
+                email);
 
             return new SimulateCreditResponse
             {
@@ -65,8 +94,13 @@ public sealed class SimulateCreditUseCase : ISimulateCreditUseCase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error executing simulation for {Email}", request.Customer.Email);
-            throw new SimulationException("An error occurred while executing the simulation", ex);
+            _auditLogger.LogError(
+                ex,
+                "Simulation for {Email} failed",
+                email);
+
+            throw new SimulationException(
+                $"Error executing simulation for {email}", ex);
         }
     }
 }

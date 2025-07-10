@@ -14,13 +14,10 @@ services:
       - MongoDb__ConnectionString=mongodb://simulatecredit-mongo:27017
       - MongoDb__Database=SimulateCreditDb
       - MongoDb__Collection=simulationscredits
-      - Redis__Host=simulatecredit-redis
-      - Redis__Port=6379
       - RabbitMq__Host=simulatecredit-rabbitmq
       - RabbitMq__Port=5672
     depends_on:
       - mongodb
-      - redis
       - rabbitmq
 
   mongodb:

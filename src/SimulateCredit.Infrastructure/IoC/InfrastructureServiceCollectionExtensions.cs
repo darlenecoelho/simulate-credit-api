@@ -5,6 +5,7 @@ using SimulateCredit.Infrastructure.Adapters.Broker;
 using SimulateCredit.Infrastructure.Adapters.EmailNotification;
 using SimulateCredit.Infrastructure.Adapters.FakeCurrency;
 using SimulateCredit.Infrastructure.Adapters.Persistence.Mongo;
+using SimulateCredit.Infrastructure.Logging;
 using SimulateCredit.Infrastructure.Mapping;
 using SimulateCredit.Infrastructure.Settings;
 
@@ -33,6 +34,9 @@ namespace SimulateCredit.Infrastructure.IoC
 
             // Email notifications
             services.AddSingleton<INotificationService, NotificationService>();
+
+            // Audit logging
+            services.AddSingleton<IAuditLogger, AuditLogger>();
 
             return services;
         }

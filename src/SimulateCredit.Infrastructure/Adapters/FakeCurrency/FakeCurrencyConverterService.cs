@@ -1,18 +1,17 @@
 ﻿using SimulateCredit.Application.Ports.Outgoing;
-using Microsoft.Extensions.Logging;
 using SimulateCredit.Domain.ValueObjects;
 namespace SimulateCredit.Infrastructure.Adapters.FakeCurrency;
 
 public sealed class FakeCurrencyConverterService : ICurrencyConverterService
 {
-    private readonly ILogger<FakeCurrencyConverterService> _logger;
+    private readonly IAuditLogger _auditLogger;
 
-    public FakeCurrencyConverterService(ILogger<FakeCurrencyConverterService> logger)
-        => _logger = logger;
+    public FakeCurrencyConverterService(IAuditLogger auditLogger)
+        => _auditLogger = auditLogger;
 
     public Task<decimal> ConvertAsync(decimal amount, Currency fromCurrency, Currency toCurrency)
     {
-        _logger.LogInformation("Converting {Amount} from {From} to {To}", amount, fromCurrency, toCurrency);
+        _auditLogger.LogInformation("Converting {Amount} from {From} to {To}", amount, fromCurrency, toCurrency);
 
         try
         {
@@ -30,7 +29,7 @@ public sealed class FakeCurrencyConverterService : ICurrencyConverterService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error converting currency");
+            _auditLogger.LogError(ex, "Error converting currency");
             throw;
         }
     }

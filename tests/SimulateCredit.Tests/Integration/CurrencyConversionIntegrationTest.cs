@@ -11,7 +11,7 @@ using SimulateCredit.Domain.Enums;
 using SimulateCredit.Domain.ValueObjects;
 using SimulateCredit.Tests.Config;
 
-namespace SimulateCredit.Tests.Integration.UseCases
+namespace SimulateCredit.Tests.Integration
 {
     public class CurrencyConversionIntegrationTest : TestConfig<SimulateCreditUseCase>
     {
@@ -53,7 +53,7 @@ namespace SimulateCredit.Tests.Integration.UseCases
                 mediator: MediatorMock.Object,
                 calculator: calculator,
                 factory: factory,
-                logger: LoggerMock.Object);
+                AuditLoggerMock.Object);
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace SimulateCredit.Tests.Integration.UseCases
             var usedPrincipal = 100m * 5m;
             var monthlyRate = 0.03m / 12m;
             var factor = (decimal)Math.Pow(1 + (double)monthlyRate, request.Months);
-            var expectedMonthly = (usedPrincipal * monthlyRate * factor) / (factor - 1);
+            var expectedMonthly = usedPrincipal * monthlyRate * factor / (factor - 1);
 
             response.MonthlyPayment
                 .Should().BeApproximately(Math.Round(expectedMonthly, 2), 0.01m);
