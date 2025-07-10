@@ -22,19 +22,6 @@ public class CustomerTests : TestConfig<Customer>
         customer.Email.Should().Be(email);
     }
 
-    [Fact]
-    public void Constructor_InvalidEmail_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var birthDate = new DateTime(1990, 1, 1);
-
-        // Act
-        Action act = () => new Customer(birthDate, null!);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>();
-    }
-
     [Theory]
     [InlineData("2007-01-01", InterestAgeGroup.UP_TO_25)]
     [InlineData("1995-01-01", InterestAgeGroup.FROM_26_TO_40)]

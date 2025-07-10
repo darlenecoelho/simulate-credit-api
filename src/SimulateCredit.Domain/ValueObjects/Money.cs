@@ -10,11 +10,4 @@ public sealed class Money
             throw new ArgumentException("Amount cannot be negative.");
         Amount = amount;
     }
-
-    public static Money operator +(Money a, Money b) => new(a.Amount + b.Amount);
-    public static Money operator *(Money a, decimal b) => new(a.Amount * b);
-    public static Money operator *(decimal b, Money a) => new(a.Amount * b);
-    public static implicit operator decimal(Money m) => m.Amount;
-
-    public override string ToString() => Amount.ToString("C2");
 }

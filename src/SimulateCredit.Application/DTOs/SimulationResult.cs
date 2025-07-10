@@ -1,7 +1,9 @@
 ﻿namespace SimulateCredit.Application.DTOs;
 
-public sealed class SimulationResult
+public sealed record SimulationResult
 {
-    public SimulateCreditResponse Response { get; init; } = new();
-    public string? DocumentId { get; init; } 
+    public decimal TotalAmount { get; init; }
+    public decimal MonthlyPayment { get; init; }
+    public decimal TotalInterest { get; init; }
+    public required string Email { get; init; }
 }

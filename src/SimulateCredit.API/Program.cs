@@ -1,14 +1,17 @@
-using SimulateCredit.Application.Ports.Incoming;
-using SimulateCredit.Application.UseCases.SimulateCredit;
 using SimulateCredit.Infrastructure.Converters;
 using SimulateCredit.Infrastructure.IoC;
 using System.Text.Json.Serialization;
+using SimulateCredit.Application.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Infrastructure registrations
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
+// Application registrations
+builder.Services.AddApplicationServices();
+
+// Presentation / API
 builder.Services
     .AddControllers()
     .AddJsonOptions(opts =>
@@ -17,8 +20,8 @@ builder.Services
         opts.JsonSerializerOptions.Converters.Add(new CurrencyJsonConverter());
     });
 
-builder.Services.AddScoped<ISimulateCreditUseCase, SimulateCreditUseCase>();
-builder.Services.AddSimulateCreditServices(builder.Configuration);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 

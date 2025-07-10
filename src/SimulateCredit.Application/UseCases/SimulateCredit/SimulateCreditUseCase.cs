@@ -1,71 +1,54 @@
-﻿using SimulateCredit.Application.DTOs;
-using SimulateCredit.Application.Factories;
+﻿using MediatR;
+using SimulateCredit.Application.DTOs;
+using SimulateCredit.Application.Interfaces;
+using SimulateCredit.Application.Notifications;
 using SimulateCredit.Application.Ports.Incoming;
 using SimulateCredit.Application.Ports.Outgoing;
-using SimulateCredit.Domain.Entities;
-using SimulateCredit.Domain.ValueObjects;
 
 namespace SimulateCredit.Application.UseCases.SimulateCredit;
 
 public sealed class SimulateCreditUseCase : ISimulateCreditUseCase
 {
-    private readonly ICurrencyConverterService _currencyConverter;
     private readonly ISimulationRepository _simulationRepository;
+    private readonly IMediator _mediator;
+    private readonly ILoanCalculationService _calculator;
+    private readonly ISimulationFactory _factory;
 
-    public SimulateCreditUseCase(ICurrencyConverterService currencyConverter, ISimulationRepository simulationRepository)
+    public SimulateCreditUseCase(
+        ISimulationRepository simulationRepository,
+        IMediator mediator,
+        ILoanCalculationService calculator,
+        ISimulationFactory factory)
     {
-        _currencyConverter = currencyConverter;
         _simulationRepository = simulationRepository;
+        _mediator = mediator;
+        _calculator = calculator;
+        _factory = factory;
     }
 
     public async Task<SimulateCreditResponse> ExecuteAsync(SimulateCreditRequest request)
     {
-        var customer = new Customer(request.Customer.BirthDate, request.Customer.Email);
-        var strategy = InterestStrategyFactory.Create(request.RateType);
-        var annualRate = strategy.GetAnnualRate(customer);
-        var monthlyRate = annualRate / 12m;
+        #region Calculate
+        var resultDto = await _calculator.CalculateAsync(request);
+        #endregion
 
-        var convertedAmount = await _currencyConverter.ConvertAsync(
-       request.LoanAmount.Amount,
-       request.SourceCurrency,
-       request.TargetCurrency
-       );
+        #region Create domain entity
+        var simulation = _factory.Create(request, resultDto);
+        #endregion
 
-        var money = new Money(convertedAmount);
-        var n = request.Months;
-        var r = monthlyRate;
-        var p = money.Amount;
-
-        var factor = (decimal)Math.Pow(1 + (double)r, n); 
-        var monthlyPayment = (p * r * factor) / (factor - 1);
-        var total = monthlyPayment * n;
-        var totalInterest = total - p;
-
-        var roundedMonthlyPayment = Math.Round(monthlyPayment, 2);
-        var roundedTotal = Math.Round(total, 2);
-        var roundedInterest = Math.Round(totalInterest, 2);
-
-        var simulation = SimulationFactory.Create(
-         request.Customer.Email,
-         request.Customer.BirthDate,
-         p,
-         request.LoanAmount.Currency,
-         request.Months,
-         request.RateType.ToString(),
-         request.SourceCurrency,
-         request.TargetCurrency,
-         roundedTotal,
-         roundedMonthlyPayment,
-         roundedInterest
-     );
-
+        #region persistence
         await _simulationRepository.SaveAsync(simulation);
+        #endregion
+
+        #region Publish events
+        await _mediator.Publish(new SimulationCompletedNotification(resultDto));
+        #endregion
 
         return new SimulateCreditResponse
         {
-            TotalAmount = roundedTotal,
-            MonthlyPayment = roundedMonthlyPayment,
-            TotalInterest = roundedInterest
+            TotalAmount = resultDto.TotalAmount,
+            MonthlyPayment = resultDto.MonthlyPayment,
+            TotalInterest = resultDto.TotalInterest
         };
     }
 }

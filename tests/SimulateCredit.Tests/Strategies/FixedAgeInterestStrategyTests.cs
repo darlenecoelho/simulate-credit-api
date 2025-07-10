@@ -17,7 +17,7 @@ public class FixedInterestStrategyTests : TestConfig<FixedInterestStrategy>
     public void GetAnnualRate_ShouldReturnCorrectRate(int age, decimal expectedRate)
     {
         // Arrange
-        var customer = new Customer(DateTime.Today.AddYears(-age), "cliente@example.com");
+        var customer = new Customer(DateTime.Today.AddYears(-age), "fulano@test.com");
 
         // Act
         var result = _methods.GetAnnualRate(customer);

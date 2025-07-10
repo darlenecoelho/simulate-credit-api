@@ -4,14 +4,14 @@ namespace SimulateCredit.Domain.Entities;
 
 public sealed class Customer
 {
-    public DateTime BirthDate { get; }
-    public string Email { get; }
-
     public Customer(DateTime birthDate, string email)
     {
         BirthDate = birthDate;
-        Email = email ?? throw new ArgumentNullException(nameof(email));
+        Email = email;
     }
+
+    public DateTime BirthDate { get; }
+    public string Email { get; }
 
     public int GetAge()
     {

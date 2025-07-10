@@ -32,13 +32,6 @@ services:
     volumes:
       - mongo-data:/data/db
 
-  redis:
-    image: redis
-    container_name: simulatecredit-redis
-    restart: always
-    ports:
-      - "6379:6379"
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: simulatecredit-rabbitmq

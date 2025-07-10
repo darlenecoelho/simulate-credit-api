@@ -14,6 +14,6 @@ public sealed class LoanAmountDtoValidator : AbstractValidator<LoanAmountDto>
         RuleFor(x => x.Currency)
             .NotNull().WithMessage("Currency is required.")
             .Must(c => Currency.IsValid(c.ToString()))
-            .WithMessage("Currency must be a valid ISO 4217 code (e.g., USD, BRL, EUR).");
+            .WithMessage("Currency must be a valid ISO 4217 code (USD, BRL, EUR).");
     }
 }

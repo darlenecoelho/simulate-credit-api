@@ -1,6 +1,6 @@
-﻿using SimulateCredit.Domain.Strategies;
-using SimulateCredit.Domain.Enums;
+﻿using SimulateCredit.Domain.Enums;
 using SimulateCredit.Domain.Interfaces;
+using SimulateCredit.Domain.Strategies;
 
 namespace SimulateCredit.Application.Factories;
 

@@ -30,7 +30,7 @@ public class VariableInterestStrategyTests : TestConfig<VariableInterestStrategy
     public void GetAnnualRate_ShouldAddExtraRateToBase_WhenCustomerIsValid()
     {
         // Arrange
-        var customer = new Customer(new DateTime(1995, 7, 8), "customer@example.com");
+        var customer = new Customer(new DateTime(1995, 7, 8), "customer@test.com");
         var mockBaseStrategy = new Mock<IInterestStrategy>();
         mockBaseStrategy.Setup(s => s.GetAnnualRate(customer)).Returns(0.03m);
 

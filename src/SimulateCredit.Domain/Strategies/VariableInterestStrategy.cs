@@ -14,7 +14,7 @@ public sealed class VariableInterestStrategy : IInterestStrategy
         _extraAnnualRate = extraAnnualRate;
     }
 
-   public decimal GetAnnualRate(Customer customer)
+    public decimal GetAnnualRate(Customer customer)
     {
         if (customer is null)
             throw new ArgumentNullException(nameof(customer));
