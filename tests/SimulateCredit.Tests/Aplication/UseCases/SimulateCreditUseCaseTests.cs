@@ -43,7 +43,8 @@ public class SimulateCreditUseCaseIntegrationTests : TestConfig<SimulateCreditUs
             SimulationRepositoryMock.Object,
             MediatorMock.Object,
             calculator,
-            factory);
+            factory,
+            LoggerMock.Object);
     }
 
     [Theory]

@@ -52,7 +52,8 @@ namespace SimulateCredit.Tests.Integration.UseCases
                 simulationRepository: SimulationRepositoryMock.Object,
                 mediator: MediatorMock.Object,
                 calculator: calculator,
-                factory: factory);
+                factory: factory,
+                logger: LoggerMock.Object);
         }
 
         [Fact]

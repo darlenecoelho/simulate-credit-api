@@ -16,10 +16,18 @@ public class NotificationService : INotificationService
         decimal monthlyPayment,
         decimal totalInterest)
     {
-        _logger.LogInformation(
-            "Simulating send email to {Email}: Total={Total:C}, Monthly={Monthly:C}, Interest={Interest:C}",
-            email, totalAmount, monthlyPayment, totalInterest);
+        try
+        {
+            _logger.LogInformation(
+                "Simulating send email to {Email}: Total={Total:C}, Monthly={Monthly:C}, Interest={Interest:C}",
+                email, totalAmount, monthlyPayment, totalInterest);
 
-        return Task.CompletedTask;
+            return Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending notification to {Email}", email);
+            throw;
+        }
     }
 }
