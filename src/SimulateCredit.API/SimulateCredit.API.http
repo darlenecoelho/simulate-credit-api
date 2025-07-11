@@ -1,6 +1,0 @@
-@SimulateCredit.API_HostAddress = http://localhost:5120
-
-GET {{SimulateCredit.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
